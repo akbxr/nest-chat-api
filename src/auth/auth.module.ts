@@ -10,6 +10,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { RefreshTokenService } from './services/refresh-token.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GithubStrategy } from './strategies/github.strategy';
+import { MailService } from 'src/mail/mail.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { GithubStrategy } from './strategies/github.strategy';
     GoogleStrategy,
     GithubStrategy,
     RefreshTokenService,
+    MailService,
   ],
   exports: [AuthService],
 })

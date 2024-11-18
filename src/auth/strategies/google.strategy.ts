@@ -25,6 +25,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email: emails[0].value,
       username: emails[0].value.split('@')[0], // Create username from email
       picture: photos[0].value,
+      provider: 'google',
       accessToken,
       refreshToken,
     };

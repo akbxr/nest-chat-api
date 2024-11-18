@@ -9,11 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
-import {
-  CreateUserDto,
-  LoginUserDto,
-  UpdateUserDto,
-} from 'src/users/dto/user.dto';
+import { CreateUserDto, LoginUserDto } from 'src/users/dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
@@ -49,6 +45,11 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   async githubAuthRedirect(@Req() req) {
     return req.user;
+  }
+
+  @Post('refresh')
+  async refreshToken(@Body('refresh_token') token: string) {
+    return this.authService.refreshToken(token);
   }
 
   @Get('verify-email')

@@ -142,10 +142,15 @@ export class AuthService {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
+      if (savedToken.expiresAt < new Date()) {
+        throw new UnauthorizedException('Refresh token has expired');
+      }
+
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_REFRESH_SECRET,
       });
 
+      // Implement refresh token rotation
       await this.refreshTokenService.revokeToken(token);
 
       const newPayload: JwtPayload = {

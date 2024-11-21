@@ -1,10 +1,20 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { LoggerMiddleware } from './middleware/logger.moiddleware';
+import { SecurityHeadersMiddleware } from './middleware/security-header.middleware';
+import { RateLimiterMiddleware } from './middleware/rate-limiter.middleware';
+import { ErrorTrackerMiddleware } from './middleware/error-tracker.middleware';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -39,6 +49,24 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     }),
     UsersModule,
     AuthModule,
+    ChatModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        LoggerMiddleware,
+        SecurityHeadersMiddleware,
+        ErrorTrackerMiddleware,
+      )
+      .forRoutes('*')
+      .apply(RateLimiterMiddleware)
+      .forRoutes(
+        { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'auth/register', method: RequestMethod.POST },
+        { path: 'auth/forgot-password', method: RequestMethod.POST },
+        { path: 'auth/reset-password', method: RequestMethod.POST },
+      );
+  }
+}

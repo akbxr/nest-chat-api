@@ -7,15 +7,20 @@ import {
   Get,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UsersService,
+  ) {}
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
@@ -33,8 +38,11 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return req.user;
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const user = req.user;
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?token=${user.access_token}`,
+    );
   }
 
   @Get('github')
@@ -43,13 +51,26 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubAuthRedirect(@Req() req) {
-    return req.user;
+  async githubAuthRedirect(@Req() req, @Res() res) {
+    const user = req.user;
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?token=${user.access_token}`,
+    );
   }
 
   @Post('refresh')
   async refreshToken(@Body('refresh_token') token: string) {
     return this.authService.refreshToken(token);
+  }
+
+  @Get('verify')
+  @UseGuards(AuthGuard('jwt'))
+  async verify(@Request() req) {
+    const user = await this.userService.findById(req.user.id);
+    return {
+      email: user.email,
+      username: user.username,
+    };
   }
 
   @Get('verify-email')

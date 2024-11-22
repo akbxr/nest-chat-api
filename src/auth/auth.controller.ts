@@ -39,10 +39,23 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
-    const user = req.user;
-    res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?token=${user.access_token}`,
-    );
+    try {
+      const { access_token, refresh_token, user } = req.user;
+
+      const params = new URLSearchParams({
+        access_token,
+        refresh_token,
+        user: encodeURIComponent(JSON.stringify(user)),
+      });
+
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/auth/callback?${params.toString()}`,
+      );
+    } catch (error) {
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(error.message)}`,
+      );
+    }
   }
 
   @Get('github')
@@ -52,10 +65,23 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubAuthRedirect(@Req() req, @Res() res) {
-    const user = req.user;
-    res.redirect(
-      `${process.env.FRONTEND_URL}/auth/callback?token=${user.access_token}`,
-    );
+    try {
+      const { access_token, refresh_token, user } = req.user;
+
+      const params = new URLSearchParams({
+        access_token,
+        refresh_token,
+        user: encodeURIComponent(JSON.stringify(user)),
+      });
+
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/auth/callback?${params.toString()}`,
+      );
+    } catch (error) {
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(error.message)}`,
+      );
+    }
   }
 
   @Post('refresh')

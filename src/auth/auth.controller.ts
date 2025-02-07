@@ -116,4 +116,10 @@ export class AuthController {
       resetPassword.newPassword,
     );
   }
+
+  @Post('public-key')
+  @UseGuards(AuthGuard('jwt'))
+  async updatePublicKey(@Request() req, @Body() body: { publicKey: string }) {
+    return this.userService.updatePublicKey(req.user.id, body.publicKey);
+  }
 }

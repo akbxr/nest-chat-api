@@ -137,6 +137,8 @@ export class AuthService {
     token: string,
   ): Promise<{ access_token: string; refresh_token: string }> {
     try {
+      await this.refreshTokenService.deleteExpiredTokens();
+
       const savedToken = await this.refreshTokenService.findByToken(token);
       if (!savedToken) {
         throw new UnauthorizedException('Invalid refresh token');

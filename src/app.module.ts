@@ -15,10 +15,16 @@ import { SecurityHeadersMiddleware } from './middleware/security-header.middlewa
 import { RateLimiterMiddleware } from './middleware/rate-limiter.middleware';
 import { ErrorTrackerMiddleware } from './middleware/error-tracker.middleware';
 import { ChatModule } from './chat/chat.module';
+import { RefreshTokenService } from './auth/services/refresh-token.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RefreshToken } from './auth/entities/refresh-token.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: process.env.DB_URL,
@@ -27,6 +33,7 @@ import { ChatModule } from './chat/chat.module';
       autoLoadEntities: true,
       synchronize: true, // CHANGE TO false IN PROD
     }),
+    TypeOrmModule.forFeature([RefreshToken]),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
@@ -51,6 +58,8 @@ import { ChatModule } from './chat/chat.module';
     AuthModule,
     ChatModule,
   ],
+  providers: [RefreshTokenService],
+  exports: [RefreshTokenService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -22,6 +22,7 @@ interface OAuthUserData {
   email: string;
   username: string;
   picture: string;
+  provider: string;
   accessToken: string;
   refreshToken: string;
 }
@@ -193,6 +194,7 @@ export class AuthService {
           email: userData.email,
           username: userData.username,
           password: '',
+          provider: userData.provider,
           picture: userData.picture,
           isEmailVerified: true,
         });

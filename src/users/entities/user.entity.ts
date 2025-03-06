@@ -32,6 +32,9 @@ export class User {
   isEmailVerified: boolean;
 
   @Column({ nullable: true })
+  publicKey: string;
+
+  @Column({ nullable: true })
   verificationToken: string;
 
   @Column({ nullable: true })

@@ -28,6 +28,7 @@ export class UsersService {
           id: true,
           username: true,
           email: true,
+          publicKey: true,
           picture: true,
           createdAt: true,
           updatedAt: true,
@@ -118,5 +119,9 @@ export class UsersService {
     } catch (error) {
       throw new Error('Failed to search users');
     }
+  }
+
+  async updatePublicKey(userId: number, publicKey: string) {
+    return this.update(userId, { publicKey });
   }
 }

@@ -65,6 +65,10 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
+  @IsEmail()
+  publicKey?: string;
+
+  @IsOptional()
   @IsBoolean()
   isEmailVerified?: boolean;
 

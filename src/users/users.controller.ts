@@ -36,36 +36,31 @@ export class UsersController {
   @Get('me')
   async getUser(@Req() req) {
     const userId = req.user.id;
-
     const user = await this.usersService.findById(userId);
-
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
     return user;
   }
 
-  @Get(':username')
-  async findByUsername(@Param('username') username: string) {
-    const user = await this.usersService.findByUsername(username);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
-    return user;
-  }
-
+  // Pindahkan route search ke atas sebelum route dengan parameter
   @Get('search')
   async searchUsers(@Query('username') query: string) {
     return this.usersService.searchUsers(query);
   }
 
+  @Get(':username')
+  async findByUsername(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     const user = await this.usersService.findById(+id);
-
     const { password, ...result } = user;
     return result;
   }

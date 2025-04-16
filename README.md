@@ -1,51 +1,156 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Nest Chat
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure, end-to-end encrypted real-time chat application built with NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![Nest Chat](https://nestjs.com/img/logo-small.svg)
 
-## Description
+<!-- ## Features -->
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **End-to-End Encryption** - All messages are encrypted using libsodium's XChaCha20-Poly1305 encryption
+- **Real-time Communication** - Uses WebSockets (Socket.io) for instant messaging
+- **User Authentication** - Email/password, Google and GitHub OAuth support
+- **Password Reset** - Secure password reset flow with email notifications
+- **Message History** - Persistent chat history stored securely
+- **Message Editing** - Edit previously sent messages
+- **Typing Indicators** - Real-time typing notifications
+- **Online Status** - See when users are online/offline
+- **Rate Limiting** - Protection against brute force attacks
+- **Security Headers** - Implemented security best practices
 
-## Project setup
+## Tech Stack
+
+- **Backend** - NestJS with TypeScript
+- **Database** - PostgreSQL with TypeORM
+- **Authentication** - JWT with Passport
+- **Real-time** - Socket.io
+- **Encryption** - libsodium-wrappers
+- **Email** - Nodemailer with Gmail SMTP
+
+## Prerequisites
+
+- Node.js (v16+)
+- npm or pnpm
+- PostgreSQL database
+
+## Project Setup
+
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
 $ pnpm install
 ```
 
-## Compile and run the project
+3. Create a `.env` file in the root directory with the following variables:
+
+```
+DB_URL=your_postgres_connection_string
+FRONTEND_URL=http://localhost:3000
+PORT=8000
+
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_token_secret
+
+# For Google OAuth (optional)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:8000/api/auth/google/callback
+
+# For GitHub OAuth (optional)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_CALLBACK_URL=http://localhost:8000/api/auth/github/callback
+
+# For email functionality
+EMAIL_USER=your_email_address
+EMAIL_PASSWORD=your_email_password
+```
+
+## Running the Application
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
+# development mode
 $ pnpm run start:dev
+$ pnpm run start:debug
 
 # production mode
+$ pnpm run build
 $ pnpm run start:prod
 ```
 
-## Run tests
+## Database Migrations
+
+This project uses TypeORM for database management. You can run migrations with the following commands:
+
+```bash
+# Generate a migration
+$ pnpm run migration:generate -- src/migrations/MigrationName
+
+# Run migrations
+$ pnpm run migration:run
+
+# Revert migrations
+$ pnpm run migration:revert
+
+# Show migration status
+$ pnpm run migration:show
+```
+
+## API Endpoints
+
+### Authentication
+
+- `POST /auth/register` - Register a new user
+- `POST /auth/login` - Login with email and password
+- `POST /auth/refresh` - Refresh access token
+- `POST /auth/forgot-password` - Request password reset
+- `POST /auth/reset-password` - Reset password with token
+- `GET /auth/verify` - Verify current user (requires JWT)
+- `GET /auth/verify-email` - Verify email with token
+- `GET /auth/google` - Google OAuth login
+- `GET /auth/google/callback` - Google OAuth callback
+- `GET /auth/github` - GitHub OAuth login
+- `GET /auth/github/callback` - GitHub OAuth callback
+- `POST /auth/public-key` - Update user's public key (requires JWT)
+
+### Users
+
+- `POST /users` - Create a new user
+- `GET /users` - Get all users
+- `GET /users/me` - Get current user profile
+- `GET /users/search` - Search for users by username
+- `GET /users/:username` - Get user by username
+- `GET /users/:id` - Get user by ID
+- `PATCH /users/:id` - Update user (requires user ownership)
+- `DELETE /users/:id` - Delete user (requires user ownership)
+
+### Chat
+
+- `GET /chat/conversation/:otherUserId` - Get conversation with a specific user
+- `GET /chat/recent` - Get recent chats
+- `GET /chat/search` - Search messages (query params: query, otherUserId)
+- `GET /chat/recent-users` - Get users with recent chats
+- `DELETE /chat/:id` - Delete a message
+- `PUT /chat/mark-read/:recipientId` - Mark messages as read
+
+## WebSocket Events
+
+### Client to Server
+
+- `sendMessage` - Send a new message
+- `editMessage` - Edit a message
+- `getConversation` - Get conversation history
+- `typing` - Indicate user is typing
+
+### Server to Client
+
+- `newMessage` - Receive a new message
+- `messageEdited` - Message has been edited
+- `userTyping` - User is typing
+- `userConnected` - User came online
+- `userDisconnected` - User went offline
+
+## Testing
 
 ```bash
 # unit tests
@@ -58,42 +163,20 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
-## Deployment
+## Security Considerations
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+1. All messages are end-to-end encrypted
+2. Passwords are hashed using bcrypt
+3. Rate limiting is applied to authentication endpoints
+4. JSON Web Tokens are used for authentication
+5. Security headers are implemented
+6. CORS is configured appropriately
+7. Environment variables are used for sensitive information
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Contributing
 
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
